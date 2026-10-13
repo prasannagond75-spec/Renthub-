@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RentHub | Rent Anything Near You</title>
+
+<style>
+:root {
+  --primary: #078b72;
+  --dark: #153c35;
+  --light: #effaf6;
+  --white: #ffffff;
+  --muted: #687a75;
+}
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  color: #20332e;
+  background: #f8fbf9;
+}
+
+header {
+  background: white;
+  padding: 15px 6%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  flex-wrap: wrap;
+  box-shadow: 0 2px 12px #00000008;
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+
+.logo {
+  color: var(--primary);
+  font-size: 25px;
+  font-weight: 800;
+}
+.logo span { color: var(--dark); }
+
+nav {
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+nav a {
+  text-decoration: none;
+  color: #374b45;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+button {
+  cursor: pointer;
+  border: 0;
+  border-radius: 9px;
+  padding: 12px 17px;
+  font-weight: bold;
+}
+.primary { background: var(--primary); color: white; }
+.secondary { background: white; color: var(--primary); border: 1px solid #b6ded3; }
+
+.hero {
+  padding: 65px 7%;
+  background: linear-gradient(120deg, #e2f6ed, #f4faf5);
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 35px;
+  align-items: center;
+}
+
+.tag {
+  color: var(--primary);
+  font-weight: bold;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+h1 {
+  font-size: clamp(35px, 5vw, 58px);
+  line-height: 1.1;
+  color: var(--dark);
+  margin: 15px 0;
+}
+.hero p { color: #5d716a; line-height: 1.7; }
+
+.search-box {
+  background: white;
+  padding: 12px;
+  border-radius: 14px;
+  display: flex;
+  gap: 10px;
+  margin-top: 25px;
+  box-shadow: 0 8px 30px #153c3510;
+}
+input, select, textarea {
+  width: 100%;
+  padding: 13px;
+  border: 1px solid #dce7e2;
+  border-radius: 8px;
+  font: inherit;
+  background: white;
+}
+.search-box input { border: none; min-width: 0; }
+
+.hero-art {
+  min-height: 280px;
+  background: #cdece0;
+  border-radius: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 105px;
+  position: relative;
+}
+.hero-art .float {
+  position: absolute;
+  font-size: 15px;
+  background: white;
+  padding: 12px 16px;
+  border-radius: 12px;
+  box-shadow: 0 5px 20px #00000010;
+}
+.float.one { top: 20px; left: 12px; }
+.float.two { bottom: 20px; right: 12px; }
+
+section { padding: 38px 6%; }
+.section-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 22px;
+}
+h2 { margin: 0; color: var(--dark); font-size: 26px; }
+.subtitle { color: var(--muted); font-size: 14px; margin-top: 8px; }
+
+.categories {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15px;
+}
+.category {
+  padding: 22px 12px;
+  background: white;
+  border: 1px solid #e7eeea;
+  border-radius: 14px;
+  text-align: center;
+  cursor: pointer;
+  transition: .2s;
+}
+.category:hover { transform: translateY(-3px); border-color: var(--primary); }
+.category .emoji { font-size: 34px; margin-bottom: 10px; }
+.category strong { display: block; }
+.category small { display: block; color: var(--muted); margin-top: 6px; }
+
+.listings {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+.card {
+  background: white;
+  border-radius: 15px;
+  overflow: hidden;
+  border: 1px solid #e5ece8;
+  box-shadow: 0 4px 15px #00000004;
+}
+.item-image {
+  height: 175px;
+  background: #e8f5ef;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 65px;
+}
+.card-body { padding: 17px; }
+.badge {
+  display: inline-block;
+  color: var(--primary);
+  background: #e8f8f1;
+  border-radius: 20px;
+  padding: 5px 9px;
+  font-size: 11px;
+}
+.card h3 { margin: 12px 0 7px; }
+.location { color: var(--muted); font-size: 13px; }
+.price { color: var(--primary); font-size: 20px; font-weight: bold; margin: 15px 0; }
+.price small { font-size: 12px; font-weight: normal; color: var(--muted); }
+
+.empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  background: white;
+  padding: 35px;
+  border-radius: 12px;
+  color: var(--muted);
+}
+
+.panel {
+  display: none;
+  padding: 25px;
+  max-width: 600px;
+  margin: 25px auto;
+  background: white;
+  border-radius: 15px;
+  border: 1px solid #e5ece8;
+}
+.panel h2 { margin-bottom: 20px; }
+.panel input, .panel select, .panel textarea { margin-bottom: 12px; }
+.message { margin-top: 12px; font-size: 14px; color: var(--primary); }
+
+.how {
+  background: var(--light);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+.how article {
+  background: white;
+  border-radius: 14px;
+  padding: 22px;
+}
+.how article div { font-size: 30px; }
+.how h3 { color: var(--dark); }
+
+footer {
+  background: #153c35;
+  color: white;
+  text-align: center;
+  padding: 28px 15px;
+}
+footer p { color: #c4d9d2; font-size: 13px; }
+
+@media(max-width: 700px) {
+  header { padding: 14px 5%; }
+  nav { order: 3; width: 100%; justify-content: space-between; gap: 8px; }
+  nav a { font-size: 12px; }
+  .hero { grid-template-columns: 1fr; padding: 42px 5%; }
+  .hero-art { min-height: 210px; font-size: 75px; }
+  section { padding: 30px 5%; }
+  .categories { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .listings { grid-template-columns: 1fr; }
+  .how { grid-template-columns: 1fr; }
+  .search-box { flex-wrap: wrap; }
+  .search-box button { width: 100%; }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo">Rent<span>Hub.</span></div>
+  <nav>
+    <a href="#home">Home</a>
+    <a href="#categories">Categories</a>
+    <a href="#browse">Browse</a>
+    <a href="#how">How it works</a>
+  </nav>
+  <button class="primary" onclick="openForm()">+ List an item</button>
+</header>
+
+<main>
+<section class="hero" id="home">
+  <div>
+    <div class="tag">Your neighbourhood rental marketplace</div>
+    <h1>Rent anything.<br>Right around you.</h1>
+    <p>From power tools to bikes and electronics, find useful things nearby without buying them.</p>
+
+    <div class="search-box">
+      <input id="searchInput" placeholder="What do you need to rent?">
+      <select id="locationInput" aria-label="Choose location">
+        <option value="">All locations</option>
+        <option>Bhatkal</option>
+        <option>Mangalore</option>
+        <option>Udupi</option>
+        <option>Bengaluru</option>
+      </select>
+      <button class="primary" onclick="searchItems()">Search</button>
+    </div>
+  </div>
+  <div class="hero-art">
+    🧰
+    <div class="float one">🏍️ Bikes nearby</div>
+    <div class="float two">📍 Rent locally</div>
+  </div>
+</section>
+
+<section id="categories">
+  <div class="section-head">
+    <div>
+      <h2>Explore categories</h2>
+      <div class="subtitle">Find what you need for your next task.</div>
+    </div>
+  </div>
+
+  <div class="categories">
+    <div class="category" onclick="filterCategory('Tools')">
+      <div class="emoji">🛠️</div><strong>Tools</strong><small>DIY and repairs</small>
+    </div>
+    <div class="category" onclick="filterCategory('Bikes')">
+      <div class="emoji">🏍️</div><strong>Bikes</strong><small>Two-wheelers</small>
+    </div>
+    <div class="category" onclick="filterCategory('Electronics')">
+      <div class="emoji">📷</div><strong>Electronics</strong><small>Gadgets and cameras</small>
+    </div>
+    <div class="category" onclick="filterCategory('Camping')">
+      <div class="emoji">⛺</div><strong>Camping</strong><small>Outdoor essentials</small>
+    </div>
+    <div class="category" onclick="filterCategory('Events')">
+      <div class="emoji">🎤</div><strong>Events</strong><small>Speakers and more</small>
+    </div>
+    <div class="category" onclick="filterCategory('Home & DIY')">
+      <div class="emoji">🏠</div><strong>Home & DIY</strong><small>Everyday needs</small>
+    </div>
+    <div class="category" onclick="filterCategory('Sports')">
+      <div class="emoji">🏸</div><strong>Sports</strong><small>Play and exercise</small>
+    </div>
+    <div class="category" onclick="filterCategory('Books')">
+      <div class="emoji">📚</div><strong>Books</strong><small>Read and learn</small>
+    </div>
+  </div>
+</section>
+
+<section id="browse">
+  <div class="section-head">
+    <div>
+      <h2 id="listingHeading">Popular rentals</h2>
+      <div class="subtitle">Explore sample items available in your area.</div>
+    </div>
+    <button class="secondary" onclick="showAll()">View all</button>
+  </div>
+  <div class="listings" id="listingGrid"></div>
+</section>
+
+<section id="how" class="how">
+  <article>
+    <div>🔎</div>
+    <h3>1. Find an item</h3>
+    <p>Search by item, category, and location.</p>
+  </article>
+  <article>
+    <div>📅</div>
+    <h3>2. Request a rental</h3>
+    <p>Choose an item and submit your rental request.</p>
+  </article>
+  <article>
+    <div>🤝</div>
+    <h3>3. Connect locally</h3>
+    <p>Contact the owner to agree on the rental details.</p>
+  </article>
+</section>
+
+<section id="listForm" class="panel">
+  <h2>List your item</h2>
+  <form id="itemForm">
+    <input id="itemName" placeholder="Item name (e.g. Electric drill)" required>
+    <select id="itemCategory" required>
+      <option value="">Choose category</option>
+      <option>Tools</option><option>Bikes</option>
+      <option>Electronics</option><option>Camping</option>
+      <option>Events</option><option>Home & DIY</option>
+      <option>Sports</option><option>Books</option>
+    </select>
+    <input id="itemPrice" type="number" min="1" placeholder="Rental price per day (₹)" required>
+    <select id="itemLocation" required>
+      <option value="">Choose location</option>
+      <option>Bhatkal</option><option>Mangalore</option>
+      <option>Udupi</option><option>Bengaluru</option>
+    </select>
+    <input id="itemOwner" placeholder="Owner name" required>
+    <textarea id="itemDescription" placeholder="Short description" rows="3"></textarea>
+    <button class="primary" type="submit">Publish listing</button>
+    <button class="secondary" type="button" onclick="closeForm()">Cancel</button>
+  </form>
+  <div id="formMessage" class="message"></div>
+</section>
+
+<section id="rentForm" class="panel">
+  <h2>Request a rental</h2>
+  <form id="requestForm">
+    <input id="requestItemId" type="hidden">
+    <input id="requestName" placeholder="Your name" required>
+    <input id="requestPhone" type="tel" placeholder="Your phone number" required>
+    <label for="requestDate">Rental start date</label>
+    <input id="requestDate" type="date" required>
+    <label for="requestDays">Number of days</label>
+    <input id="requestDays" type="number" min="1" max="90" value="1" required>
+    <button class="primary" type="submit">Submit request</button>
+    <button class="secondary" type="button" onclick="closeRequest()">Cancel</button>
+  </form>
+  <div id="requestMessage" class="message"></div>
+</section>
+
+<section id="myRentals">
+  <div class="section-head">
+    <div>
+      <h2>My rental requests</h2>
+      <div class="subtitle">Requests saved on this device.</div>
+    </div>
+  </div>
+  <div id="myRequests" class="listings"></div>
+</section>
+</main>
+
+<footer>
+  <div class="logo" style="color:white">RentHub.</div>
+  <p>Rent smarter. Share more. Waste less.</p>
+  <p>Local rental marketplace prototype</p>
+</footer>
+
+<script>
+const sampleItems = [
+  {id:1,name:"Electric Drill Machine",category:"Tools",price:150,location:"Bhatkal",owner:"Demo Owner",description:"Electric drill for home repairs.",emoji:"🛠️"},
+  {id:2,name:"Mountain Bicycle",category:"Bikes",price:250,location:"Udupi",owner:"Demo Owner",description:"Bicycle for local rides.",emoji:"🚲"},
+  {id:3,name:"DSLR Camera",category:"Electronics",price:700,location:"Mangalore",owner:"Demo Owner",description:"Camera for events and photography.",emoji:"📷"},
+  {id:4,name:"Camping Tent",category:"Camping",price:300,location:"Bengaluru",owner:"Demo Owner",description:"Tent for outdoor trips.",emoji:"⛺"},
+  {id:5,name:"Bluetooth Speaker",category:"Events",price:200,location:"Bhatkal",owner:"Demo Owner",description:"Portable speaker for small events.",emoji:"🔊"},
+  {id:6,name:"Ladder",category:"Home & DIY",price:100,location:"Udupi",owner:"Demo Owner",description:"Ladder for household tasks.",emoji:"🪜"},
+  {id:7,name:"Badminton Set",category:"Sports",price:100,location:"Mangalore",owner:"Demo Owner",description:"Rackets for a friendly game.",emoji:"🏸"},
+  {id:8,name:"Engineering Textbook",category:"Books",price:40,location:"Bhatkal",owner:"Demo Owner",description:"Textbook for study and revision.",emoji:"📚"}
+];
+
+function readStorage(key, fallback) {
+  try {
+    const value = localStorage.getItem(key);
+    return value ? JSON.parse(value) : fallback;
+  } catch (error) {
+    return fallback;
+  }
+}
+
+let userItems = readStorage("renthub_items", []);
+let requests = readStorage("renthub_requests", []);
+let currentCategory = "";
+let currentSearch = "";
+let currentLocation = "";
+
+function saveItems() {
+  localStorage.setItem("renthub_items", JSON.stringify(userItems));
+}
+function saveRequests() {
+  localStorage.setItem("renthub_requests", JSON.stringify(requests));
+}
+function allItems() {
+  return [...userItems, ...sampleItems];
+}
+
+function renderItems() {
+  const grid = document.getElementById("listingGrid");
+  const filtered = allItems().filter(item => {
+    const matchText = (item.name + " " + item.category + " " +
+      (item.description || "")).toLowerCase().includes(currentSearch.toLowerCase());
+    const matchCategory = !currentCategory || item.category === currentCategory;
+    const matchLocation = !currentLocation || item.location === currentLocation;
+    return matchText && matchCategory && matchLocation;
+  });
+
+  document.getElementById("listingHeading").textContent =
+    currentCategory ? currentCategory + " rentals" :
+    currentSearch ? "Search results" : "Popular rentals";
+
+  if (!filtered.length) {
+    grid.innerHTML = '<div class="empty">No items found. Try another search or location.</div>';
+    return;
+  }
+
+  grid.innerHTML = filtered.map(item => `
+    <article class="card">
+      <div class="item-image">${item.emoji || "📦"}</div>
+      <div class="card-body">
+        <span class="badge">${escapeHTML(item.category)}</span>
+        <h3>${escapeHTML(item.name)}</h3>
+        <div class="location">📍 ${escapeHTML(item.location)}</div>
+        <p>${escapeHTML(item.description || "Available for rent.")}</p>
+        <div class="price">₹${Number(item.price)} <small>/ day</small></div>
+        <button class="primary" onclick="requestRental(${Number(item.id)})">Request rental</button>
+      </div>
+    </article>
+  `).join("");
+}
+
+function escapeHTML(value) {
+  return String(value).replace(/[&<>"']/g, char => ({
+    "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"
+  })[char]);
+}
+
+function searchItems() {
+  currentSearch = document.getElementById("searchInput").value.trim();
+  currentLocation = document.getElementById("locationInput").value;
+  currentCategory = "";
+  renderItems();
+  document.getElementById("browse").scrollIntoView({behavior:"smooth"});
+}
+
+function filterCategory(category) {
+  currentCategory = category;
+  currentSearch = "";
+  document.getElementById("searchInput").value = "";
+  renderItems();
+  document.getElementById("browse").scrollIntoView({behavior:"smooth"});
+}
+
+function showAll() {
+  currentCategory = "";
+  currentSearch = "";
+  currentLocation = "";
+  document.getElementById("searchInput").value = "";
+  document.getElementById("locationInput").value = "";
+  renderItems();
+}
+
+function openForm() {
+  document.getElementById("listForm").style.display = "block";
+  document.getElementById("listForm").scrollIntoView({behavior:"smooth"});
+}
+function closeForm() {
+  document.getElementById("listForm").style.display = "none";
+}
+
+document.getElementById("itemForm").addEventListener("submit", function(event) {
+  event.preventDefault();
+
+  const item = {
+    id: Date.now(),
+    name: document.getElementById("itemName").value.trim(),
+    category: document.getElementById("itemCategory").value,
+    price: Number(document.getElementById("itemPrice").value),
+    location: document.getElementById("itemLocation").value,
+    owner: document.getElementById("itemOwner").value.trim(),
+    description: document.getElementById("itemDescription").value.trim(),
+    emoji: "📦"
+  };
+
+  if (!item.name || !item.owner || item.price <= 0) {
+    document.getElementById("formMessage").textContent = "Please enter valid item details.";
+    return;
+  }
+
+  userItems.unshift(item);
+  saveItems();
+  this.reset();
+  document.getElementById("formMessage").textContent = "Item published on this device!";
+  currentCategory = "";
+  currentSearch = "";
+  currentLocation = "";
+  renderItems();
+  renderRequests();
+});
+
+function requestRental(id) {
+  const item = allItems().find(entry => entry.id === id);
+  if (!item) return;
+
+  document.getElementById("requestItemId").value = item.id;
+  document.getElementById("requestDate").min =
+    new Date().toISOString().split("T")[0];
+  document.getElementById("requestDate").value =
+    new Date().toISOString().split("T")[0];
+  document.getElementById("rentForm").style.display = "block";
+  document.getElementById("rentForm").scrollIntoView({behavior:"smooth"});
+}
+
+function closeRequest() {
+  document.getElementById("rentForm").style.display = "none";
+}
+
+document.getElementById("requestForm").addEventListener("submit", function(event) {
+  event.preventDefault();
+
+  const id = Number(document.getElementById("requestItemId").value);
+  const item = allItems().find(entry => entry.id === id);
+  const days = Number(document.getElementById("requestDays").value);
+
+  if (!item || !Number.isInteger(days) || days < 1 || days > 90) {
+    document.getElementById("requestMessage").textContent = "Please check your rental details.";
+    return;
+  }
+
+  const request = {
+    id: Date.now(),
+    itemId: item.id,
+    itemName: item.name,
+    name: document.getElementById("requestName").value.trim(),
+    phone: document.getElementById("requestPhone").value.trim(),
+    date: document.getElementById("requestDate").value,
+    days: days,
+    total: Number(item.price) * days
+  };
+
+  if (!request.name || !request.phone || !request.date) {
+    document.getElementById("requestMessage").textContent = "Please fill in all fields.";
+    return;
+  }
+
+  requests.unshift(request);
+  saveRequests();
+  this.reset();
+  document.getElementById("requestMessage").textContent =
+    "Demo request saved on this device. No owner has been contacted.";
+  renderRequests();
+});
+
+function renderRequests() {
+  const box = document.getElementById("myRequests");
+
+  if (!requests.length) {
+    box.innerHTML = '<div class="empty">Your rental requests will appear here.</div>';
+    return;
+  }
+
+  box.innerHTML = requests.map(request => `
+    <article class="card">
+      <div class="card-body">
+        <h3>${escapeHTML(request.itemName)}</h3>
+        <p>Renter: ${escapeHTML(request.name)}</p>
+        <p>Start date: ${escapeHTML(request.date)}</p>
+        <p>Duration: ${Number(request.days)} day(s)</p>
+        <div class="price">Total: ₹${Number(request.total)}</div>
+        <button class="secondary" onclick="deleteRequest(${Number(request.id)})">Remove request</button>
+      </div>
+    </article>
+  `).join("");
+}
+
+function deleteRequest(id) {
+  requests = requests.filter(request => request.id !== id);
+  saveRequests();
+  renderRequests();
+}
+
+renderItems();
+renderRequests();
+</script>
+</body>
+</html>
